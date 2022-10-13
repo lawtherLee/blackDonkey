@@ -1,11 +1,14 @@
 <template>
-  <div class='container'>面试技巧</div>
+  <div class='container'>
+    <el-card></el-card>
+
+  </div>
 </template>
 
 <script>
 export default {}
 </script>
 
-<style scoped lang='less'>
+<style lang='less' scoped>
 
 </style>
