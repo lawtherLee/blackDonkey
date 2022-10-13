@@ -54,7 +54,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <Subjectadd :dialogVisible.sync="dialogVisible" />
+      <Subjectadd ref="editSub" :dialogVisible.sync="dialogVisible" />
       <!-- 分页 -->
       <el-row type="flex" justify="end" align="middle" style="height: 60px">
         <el-pagination
@@ -92,6 +92,7 @@ export default {
   },
   created () {
     this.handleCurrentChange()
+
   },
   methods: {
     async handleCurrentChange () {
@@ -126,8 +127,10 @@ export default {
       }
     },
     // 修改
-    editSubjet () {
-
+    editSubjet (row) {
+      this.$refs.editSub.ruleForm = { ...row }
+      // console.log(this.$refs.editSub.ruleForm);
+      this.dialogVisible = true
     },
     // 新增
     async addSubjet () {
