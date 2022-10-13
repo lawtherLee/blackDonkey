@@ -1,9 +1,44 @@
 <template>
-  <div class='container'>添加学科对话框</div>
+  <div class="container">
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    dialogVisible: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data () {
+    return {
+
+    };
+  },
+  methods: {
+    handleClose () {
+      this.$emit('update:dialogVisible', false)
+    },
+    cancel () {
+      this.handleClose()
+    }
+  }
+}
 </script>
 
 <style scoped lang='less'></style>
