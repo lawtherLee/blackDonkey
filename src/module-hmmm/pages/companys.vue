@@ -81,7 +81,8 @@
       <el-table-column prop="creatorID" label="创建者"> </el-table-column>
       <el-table-column prop="addDate" label="创建日期"> </el-table-column>
       <el-table-column prop="remarks" label="备注"> </el-table-column>
-      <el-table-column prop="state" label="状态" :formatter="formatterStatus"> </el-table-column>
+      <el-table-column prop="state" label="状态" :formatter="formatterStatus">
+      </el-table-column>
       <el-table-column prop="address" label="操作">
         <template>
           <el-button
@@ -134,7 +135,7 @@ export default {
   methods: {
     // 状态转化
     formatterStatus (row, colum, cellValue, index) {
-      
+
     },
     // 索引修饰
     formatter (row, colum, cellValue, index) {
