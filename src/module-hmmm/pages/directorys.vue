@@ -11,13 +11,17 @@
         <!-- 状态 -->
         <el-form-item label="状态">
           <el-select v-model="page.state" placeholder="请选择">
-            <!-- <el-option label="启用" value="qiyong"></el-option>
-            <el-option label="禁用" value="jinyong"></el-option> -->
+            <el-option label="启用" value="1"></el-option>
+            <el-option label="禁用" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-button class="clear" @click="clear"> 清除</el-button>
         <el-button type="primary" @click="Search">搜索</el-button>
-        <el-button type="success " icon="el-icon-edit" class="add"
+        <el-button
+          type="success "
+          icon="el-icon-edit"
+          class="add"
+          @click="addDirectorys"
           >新增学科</el-button
         >
       </el-form>
@@ -50,13 +54,14 @@
         </el-table-column>
 
         <el-table-column prop="twoLevelDirectory" label="操作" width="250">
-          <template>
-            <el-button type="text">启用</el-button>
-            <el-button type="text">修改</el-button>
-            <el-button type="text">删除</el-button>
+          <template slot-scope="{ row }">
+            <el-button type="text" @click="start(row)">启用</el-button>
+            <el-button type="text" @click="editDire(row)">修改</el-button>
+            <el-button type="text" @click="delDire(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <directorysadd ref="editDire" :dialogVisible.sync="dialogVisible" />
       <!-- 分页 -->
       <el-row type="flex" justify="end" align="middle" style="height: 60px">
         <el-pagination
@@ -75,34 +80,42 @@
 </template>
 
 <script>
-import { list, changeState } from '@/api/hmmm/directorys'
+import { list, remove, changeState } from '@/api/hmmm/directorys'
 import baseAPI from '@/api/base/baseApi.js'
-
+import directorysadd from '../../module-hmmm/components/directorys-add.vue'
 export default {
+  components: {
+    directorysadd
+  },
   data () {
     return {
       status: baseAPI.status,
       tableData: [],
+      // subjectID: this.tableData,
+
+      rowss: '',
       page: {
         directoryName: '',
         page: 1,
         pagesize: 10,
       },
+
+      dialogVisible: false,
       counts: 0,
       form: {
-        directoryName: '',
         state: '',
-      }
+        id: ''
+      },
     }
   },
   created () {
     this.handleCurrentChange()
 
+
   },
   methods: {
     formatterFn (row, colum, cellValue) {
-      const res = this.status.find(ele => ele.id === cellValue)
-      return res && res.value || '禁用'
+      return this.status.filter(ele => ele.id == cellValue)[0].value
     },
     // 清除
     clear () {
@@ -110,13 +123,50 @@ export default {
     },
     async handleCurrentChange () {
       const { data } = await list(this.page)
+      // console.log(data.items)
       this.tableData = data.items
       this.counts = data.counts
+      console.log(111, this.tableData);
+
+
     },
     Search () {
       this.handleCurrentChange(this.page)
     },
+    // 新增
+    addDirectorys () {
+      this.dialogVisible = true
+    },
+    // 修改 
+    editDire (row) {
 
+      this.$refs.editDire.ruleForm = { ...row }
+      this.dialogVisible = true
+    },
+    // 删除 
+    async delDire (id) {
+      try {
+        await this.$confirm('确定删除该学科', '提示', {
+          cancelButtonText: '取消',
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        await remove(id)
+        // console.log(id);
+        this.handleCurrentChange()
+        this.$message.success('删除成功')
+      } catch (error) {
+        this.$message.error('删除失败')
+
+      }
+    },
+    // 
+    async start (row) {
+      
+      const data = await changeState(row, this.form)
+      console.log(111, row.id);
+      console.log(222, data);
+    }
   }
 }
 </script>

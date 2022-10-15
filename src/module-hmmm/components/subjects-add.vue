@@ -63,6 +63,7 @@ export default {
       }
     };
   },
+
   computed: {
     title () {
       return this.ruleForm.id ? '修改学科' : '新增学科'
