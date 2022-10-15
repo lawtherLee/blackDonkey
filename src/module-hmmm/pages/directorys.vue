@@ -55,9 +55,21 @@
 
         <el-table-column prop="twoLevelDirectory" label="操作" width="250">
           <template slot-scope="{ row }">
-            <el-button type="text" @click="start(row)">启用</el-button>
-            <el-button type="text" @click="editDire(row)">修改</el-button>
-            <el-button type="text" @click="delDire(row)">删除</el-button>
+            <el-button type="text" @click="start(row)">{{
+              row.state === 1 ? '禁用' : '启用'
+            }}</el-button>
+            <el-button
+              type="text"
+              @click="editDire(row)"
+              :disabled="row.state == 1 ? false : true"
+              >修改</el-button
+            >
+            <el-button
+              type="text"
+              @click="delDire(row)"
+              :disabled="row.state == 1 ? false : true"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -98,20 +110,20 @@ export default {
         directoryName: '',
         page: 1,
         pagesize: 10,
+        subjectID: undefined
       },
 
       dialogVisible: false,
       counts: 0,
-      form: {
-        state: '',
-        id: ''
-      },
+      // form: {
+      //   state: '',
+      //   id: ''
+      // },
     }
   },
   created () {
+    if (this.$route.query.id) this.page.subjectID = this.$route.query.id
     this.handleCurrentChange()
-
-
   },
   methods: {
     formatterFn (row, colum, cellValue) {
@@ -127,8 +139,7 @@ export default {
       this.tableData = data.items
       this.counts = data.counts
       console.log(111, this.tableData);
-
-
+      this.page.subjectID = undefined
     },
     Search () {
       this.handleCurrentChange(this.page)
@@ -162,10 +173,12 @@ export default {
     },
     // 
     async start (row) {
-      
-      const data = await changeState(row, this.form)
-      console.log(111, row.id);
-      console.log(222, data);
+      row.state === 1 ? row.state = 0 : row.state = 1
+      const { data } = await changeState(row)
+
+      console.log(data);
+      console.log(1112, row.id);
+      console.log(222, row);
     }
   }
 }

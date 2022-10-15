@@ -43,9 +43,21 @@
 
         <el-table-column prop="twoLevelDirectory" label="操作" width="250">
           <template slot-scope="{ row }">
-            <el-button type="text">启用</el-button>
-            <el-button type="text" @click="editTag(row)">修改</el-button>
-            <el-button type="text" @click="delTag(row)">删除</el-button>
+            <el-button type="text" @click="start(row)">
+              {{ row.state === 1 ? '禁用' : '启用' }}</el-button
+            >
+            <el-button
+              type="text"
+              @click="editTag(row)"
+              :disabled="row.state == 1 ? false : true"
+              >修改</el-button
+            >
+            <el-button
+              type="text"
+              @click="delTag(row)"
+              :disabled="row.state == 1 ? false : true"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -68,7 +80,7 @@
 </template>
 
 <script>
-import { list, remove } from '@/api/hmmm/tags'
+import { list, remove, changeState } from '@/api/hmmm/tags'
 import baseAPI from '@/api/base/baseApi.js'
 import tagsAdd from '../../module-hmmm/components/tags-add.vue'
 export default {
@@ -83,6 +95,7 @@ export default {
         // tagName: '',
         page: 1,
         pagesize: 10,
+        subjectID: undefined
       },
       counts: 0,
       form: {
@@ -92,6 +105,7 @@ export default {
     }
   },
   created () {
+    if (this.$route.query.id) this.page.subjectID = this.$route.query.id
     this.handleCurrentChange()
 
   },
@@ -111,8 +125,6 @@ export default {
 
     },
     Search () {
-
-
       this.handleCurrentChange(this.page)
 
     },
@@ -139,6 +151,14 @@ export default {
         this.$message.error('删除失败')
 
       }
+    },
+    async start (row) {
+      row.state === 1 ? row.state = 0 : row.state = 1
+      const { data } = await changeState(row)
+
+      console.log(data);
+      console.log(1112, row.id);
+      console.log(222, row);
     }
   }
 }

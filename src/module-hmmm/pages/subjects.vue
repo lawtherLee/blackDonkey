@@ -47,8 +47,8 @@
         <el-table-column prop="totals" label="题目数量"> </el-table-column>
         <el-table-column prop="twoLevelDirectory" label="操作" width="250">
           <template slot-scope="{ row }">
-            <el-button type="text">学科分类</el-button>
-            <el-button type="text">学科标签</el-button>
+            <el-button type="text" @click="SubClass(row)">学科分类</el-button>
+            <el-button type="text" @click="SubTag(row)">学科标签</el-button>
             <el-button type="text" @click="editSubjet(row)">修改</el-button>
             <el-button type="text" @click="delSubject(row)">删除</el-button>
           </template>
@@ -135,6 +135,27 @@ export default {
     // 新增
     async addSubjet () {
       this.dialogVisible = true
+    },
+    SubClass (row) {
+      // this.$router.push('/subjects/directorys/' + row.id)
+      this.$router.push({
+        path: '/subjects/directorys/',
+        query: {
+          id: row.id,
+          name: row.subjectName
+        }
+      })
+      console.log('name', +row.subjectName);
+      console.log('id', row.id);
+    },
+    SubTag (row) {
+      this.$router.push({
+        path: '/subjects/tags',
+        query: {
+          id: row.id,
+          name: row.subjectName
+        }
+      })
     }
   }
 }
