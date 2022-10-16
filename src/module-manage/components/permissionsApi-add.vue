@@ -1,27 +1,37 @@
 <template>
   <div class="add-form">
     <el-dialog :title="apiTitle" :visible.sync="dialogFormVisible">
-    <el-form :rules="ruleInline" ref="dataForm" :model="formBase" label-position="left" label-width="120px" style='width: 400px; margin-left:120px;'>
-          <el-form-item :label="$t('table.powerTitle')" prop="title">
-            <el-input v-model="formBase.title"></el-input>
-          </el-form-item>
-          <el-form-item  :label="$t('table.powerDistriB')">
-            <el-tree
-              ref="treeMenu"
-              :data="treeData"
-              show-checkbox
-              node-key="id"
-              :default-expanded-keys="[0]"
-              :props="defaultProps" @check-change='handleCheckChange'>
-            </el-tree>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="handleClose">{{$t('table.signOut')}}</el-button>
-          <el-button type="primary" @click="handleSave('formBase')">{{$t('table.preserve')}}</el-button>
-        </div>
-  </el-dialog>
-
+      <el-form
+        :rules="ruleInline"
+        ref="dataForm"
+        :model="formBase"
+        label-position="left"
+        label-width="120px"
+        style="width: 400px; margin-left: 120px"
+      >
+        <el-form-item :label="$t('table.powerTitle')" prop="title">
+          <el-input v-model="formBase.title"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('table.powerDistriB')">
+          <el-tree
+            ref="treeMenu"
+            :data="treeData"
+            show-checkbox
+            node-key="id"
+            :default-expanded-keys="[0]"
+            :props="defaultProps"
+            @check-change="handleCheckChange"
+          >
+          </el-tree>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">{{ $t('table.signOut') }}</el-button>
+        <el-button type="primary" @click="handleSave('formBase')">{{
+          $t('table.preserve')
+        }}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -140,13 +150,13 @@ export default {
     }
   },
   // 挂载结束
-  mounted: function () {},
+  mounted: function () { },
   // 创建完毕状态
   created () {
     _this = this
   },
   // 组件更新
-  updated: function () {}
+  updated: function () { }
 }
 </script>
 <style>

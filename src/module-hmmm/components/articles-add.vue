@@ -1,10 +1,10 @@
 <template>
-  <div class='container' >添加文章对话框</div>
+  <div class="container">添加文章对话框</div>
 </template>
 
 <script>
 export default {
-  
+
 }
 </script>
 
