@@ -2175,6 +2175,7 @@
   border-color: #e6ebf5;
 }
 .custom-theme .el-button.is-disabled.el-button--text {
+
   background-color: transparent;
 }
 .custom-theme .el-button.is-disabled.is-plain,
@@ -2511,6 +2512,7 @@
 }
 .custom-theme .el-button--text:focus,
 .custom-theme .el-button--text:hover {
+  
   color: #515254;
   border-color: transparent;
   background-color: transparent;
@@ -10652,7 +10654,7 @@
   background-color: #fff;
   border-color: #e6ebf5;
 }
-.custom-theme .el-button.is-disabled.el-button--text {
+.custom-theme .el-button.is-disabled. {
   background-color: transparent;
 }
 .custom-theme .el-button.is-disabled.is-plain,
@@ -10988,7 +10990,7 @@
   padding-right: 0;
 }
 .custom-theme .el-button--text:focus,
-.custom-theme .el-button--text:hover {
+.custom-theme .:hover {
   color: #515254;
   border-color: transparent;
   background-color: transparent;
@@ -18837,6 +18839,7 @@
   border-color: #e6ebf5;
 }
 .custom-theme .el-button.is-disabled.el-button--text {
+  
   background-color: transparent;
 }
 .custom-theme .el-button.is-disabled.is-plain,
@@ -19171,7 +19174,7 @@
   padding-left: 0;
   padding-right: 0;
 }
-.custom-theme .el-button--text:focus,
+.custom-theme .:focus,
 .custom-theme .el-button--text:hover {
   color: #515254;
   border-color: transparent;
