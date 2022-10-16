@@ -145,8 +145,8 @@ export default {
           name: row.subjectName
         }
       })
-      console.log('name', +row.subjectName);
-      console.log('id', row.id);
+      // console.log('name', +row.subjectName);
+      // console.log('id', row.id);
     },
     SubTag (row) {
       this.$router.push({

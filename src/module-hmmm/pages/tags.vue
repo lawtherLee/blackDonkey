@@ -155,10 +155,10 @@ export default {
     async start (row) {
       row.state === 1 ? row.state = 0 : row.state = 1
       const { data } = await changeState(row)
-
-      console.log(data);
-      console.log(1112, row.id);
-      console.log(222, row);
+      this.$message.success("操作成功")
+      // console.log(data);
+      // console.log(1112, row.id);
+      // console.log(222, row);
     }
   }
 }

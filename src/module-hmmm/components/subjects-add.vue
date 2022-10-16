@@ -25,7 +25,6 @@
             v-model="ruleForm.isFrontDisplay"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            text="按年付费"
           >
           </el-switch
         ></el-form-item>
@@ -51,9 +50,9 @@ export default {
     return {
       isFrontDisplay: true,
       ruleForm: {
-        id: '',
+        id: undefined,
         subjectName: '',
-        isFrontDisplay: 1
+        isFrontDisplay: true
       },
       rules: {
         subjectName: [
@@ -67,16 +66,18 @@ export default {
   computed: {
     title () {
       return this.ruleForm.id ? '修改学科' : '新增学科'
+
     }
   },
+
   methods: {
     handleClose () {
       this.$emit('update:dialogVisible', false)
       this.$refs.ruleForm.resetFields()
       this.ruleForm = {
-        id: '',
+        id: undefined,
         subjectName: '',
-        isFrontDisplay: 1
+        isFrontDisplay: true
       }
     },
     cancel () {

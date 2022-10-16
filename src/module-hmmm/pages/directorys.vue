@@ -123,6 +123,8 @@ export default {
   },
   created () {
     if (this.$route.query.id) this.page.subjectID = this.$route.query.id
+    // console.log(222, this.page.subjectID);
+    // console.log(333, this.$route.query.id);
     this.handleCurrentChange()
   },
   methods: {
@@ -138,7 +140,7 @@ export default {
       // console.log(data.items)
       this.tableData = data.items
       this.counts = data.counts
-      console.log(111, this.tableData);
+      // console.log(111, this.tableData);
       this.page.subjectID = undefined
     },
     Search () {
@@ -175,10 +177,10 @@ export default {
     async start (row) {
       row.state === 1 ? row.state = 0 : row.state = 1
       const { data } = await changeState(row)
-
-      console.log(data);
-      console.log(1112, row.id);
-      console.log(222, row);
+      this.$message.success("操作成功")
+      // console.log(data);
+      // console.log(1112, row.id);
+      // console.log(222, row);
     }
   }
 }

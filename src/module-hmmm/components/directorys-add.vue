@@ -13,8 +13,8 @@
         label-width="100px"
         class="demo-ruleForm"
       >
-        <el-form-item label="所属学科" style="width: 120%">
-          <el-select v-model="ruleForm.subjectID" placeholder="请选择">
+        <el-form-item label="所属学科" >
+          <el-select v-model="ruleForm.subjectID" placeholder="请选择" style="width:320px">
             <el-option
               v-for="(item, index) in simples"
               :key="index"
@@ -62,7 +62,6 @@ export default {
       rules: {
         directoryName: [
           { required: true, message: '请输入学科名称', trigger: 'blur' },
-
         ],
       }
 
