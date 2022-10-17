@@ -1,47 +1,54 @@
 <template>
   <div class="add-form">
-    <el-dialog :title="text+pageTitle" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="addFormData.id ? '编辑用户' : '创建用户'"
+      :visible="dialogFormVisible"
+      @close="handleClose"
+    >
       <el-form
-        :rules="ruleInline"
         ref="dataForm"
-        :model="formBase"
         label-position="left"
         label-width="120px"
-        style="width: 400px; margin-left:120px;"
+        style="width: 400px; margin-left: 120px"
+        :model="addFormData"
+        :rules="rules"
       >
-
-        <el-form-item :label="$t('table.username')" prop="username">
-          <el-input v-model="formBase.username"></el-input>
+        <el-form-item :label="$t('table.username')">
+          <el-input v-model="addFormData.username"></el-input>
         </el-form-item>
         <el-form-item :label="$t('table.email')" prop="email">
-          <el-input v-model="formBase.email"></el-input>
+          <el-input v-model="addFormData.email"></el-input>
         </el-form-item>
         <el-form-item
+          v-if="!addFormData.id || addFormData.id === 0"
           :label="$t('table.paddword')"
-          prop="password"
-          v-if="formBase.password!=undefined"
         >
-          <el-input v-model="formBase.password"></el-input>
+          <el-input v-model="addFormData.password"></el-input>
         </el-form-item>
-
         <!-- 角色 -->
-        <el-form-item :label="$t('table.role')" prop="role">
-          <el-input v-model="formBase.role"></el-input>
+        <el-form-item :label="$t('table.role')">
+          <el-input v-model="addFormData.role"></el-input>
         </el-form-item>
         <!-- 权限组 -->
-        <el-form-item :label="$t('table.permissionUser')" prop="permission_group_id">
-          <el-select class="filter-item" v-model="formBase.permission_group_id">
+        <el-form-item :label="$t('table.permissionUser')">
+          <!-- v-model="addFormData.permission_group_id" -->
+          <!-- v-model="addFormData.permission_group_title" -->
+          <el-select
+            v-model="addFormData.permission_group_id"
+            ref="quanxian"
+            placeholder="请选择"
+            class="filter-item"
+          >
             <el-option
-              v-for="item in PermissionGroupsList"
-              :value="item.id"
-              :key="item.key"
-              :label="item.title"
+              v-for="item in userList"
+              :key="item.id"
+              :label="item.permission_group_title"
+              :value="item.permission_group_id"
             ></el-option>
           </el-select>
         </el-form-item>
-
-        <el-form-item :label="$t('table.phone')" prop="phone">
-          <el-input v-model="formBase.phone"></el-input>
+        <el-form-item :label="$t('table.phone')">
+          <el-input v-model="addFormData.phone"></el-input>
         </el-form-item>
 
         <!-- 头像上传下一个版本再做 -->
@@ -58,84 +65,92 @@
         </el-form-item>-->
         <el-form-item :label="$t('table.introduction')">
           <el-input
+            v-model="addFormData.introduction"
             type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
+            :autosize="{ minRows: 2, maxRows: 4 }"
             placeholder="Please input"
-            v-model="formBase.introduction"
           ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" @click="createData">{{$t('table.confirm')}}</el-button>
+        <el-button @click="handleClose">{{ $t('table.cancel') }}</el-button>
+        <el-button type="primary" @click="createData">{{
+          $t('table.confirm')
+        }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { detail, update, add } from '@/api/base/users'
+import { update, add } from '@/api/base/users'
 export default {
   name: 'usersAdd',
   props: [
-    'text',
-    'pageTitle',
-    'PermissionGroupsList',
-    'formBase',
-    'ruleInline'
+    'dialogFormVisible',
+    'userList'
   ],
   data () {
     return {
-      dialogFormVisible: false
-      // fileList: [],
       // importFileUrl: 'https://jsonplaceholder.typicode.com/posts/',
+      addFormData: {
+        username: '',
+        password: '',
+        role: '',
+        phone: '',
+        permission_group_id: '',
+        avatar: '',
+        email: '',
+        introduction: ''
+      },
+      rules: {
+        email: [
+          { required: true, message: '必填', trigger: 'blur' },
+          { pattern: /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, message: '邮箱格式不正确', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {},
   methods: {
-    // 弹层显示
-    dialogFormV () {
-      this.dialogFormVisible = true
-    },
-    // 弹层隐藏
-    dialogFormH () {
-      this.dialogFormVisible = false
-    },
     // 退出
     handleClose () {
-      this.$emit('handleCloseModal')
+      this.$emit('update:dialogFormVisible', false)
+      // console.log(222, this.userList)
+      this.$refs.dataForm.resetFields()
+      this.addFormData = {
+        username: '',
+        password: '',
+        role: '',
+        phone: '',
+        permission_group_id: '',
+        avatar: '',
+        email: '',
+        introduction: ''
+      }
     },
 
     // 表单提交
-    createData () {
-      this.$refs.dataForm.validate(valid => {
-        if (valid) {
-          this.$emit('handleCloseModal')
-          const data = {
-            ...this.formBase
-          }
-          if (this.formBase.id) {
-            update(data).then(() => {
-              this.$emit('newDataes', this.formBase)
-            })
-          } else {
-            add(this.formBase).then(() => {
-              this.$emit('newDataes', this.formBase)
-            })
-          }
-        } else {
-          this.$Message.error('*号为必填项!')
-        }
-      })
+    async createData () {
+      // console.log(666, this.addFormData)
+      if (this.addFormData.id) {
+        this.addFormData.permission_group_title = undefined
+        this.addFormData.is_deleted = undefined
+        this.addFormData.create_time = undefined
+        this.addFormData.last_update_time = undefined
+      }
+      this.addFormData.id ? await update(this.addFormData) : await add(this.addFormData)
+      this.$parent.getUserList()
+      this.handleClose()
     }
   },
   // 挂载结束
 
-  mounted: function () {},
+  mounted: function () { },
   // 创建完毕状态
-  created () {},
+  created () { },
   // 组件更新
-  updated: function () {}
+  updated: function () { }
 }
 </script>
 <style>
@@ -146,6 +161,6 @@ export default {
   margin-bottom: 22px;
 }
 .el-dialog__footer {
-  text-align: center
+  text-align: center;
 }
 </style>
