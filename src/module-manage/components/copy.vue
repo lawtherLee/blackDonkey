@@ -1,12 +1,8 @@
 <template>
   <div class="add-form">
-    <el-dialog
-      :title="objeditId ? '编辑权限组' : '创建权限组'"
-      :visible="dialogFormVisible"
-      @close="handleClose"
-    >
+    <el-dialog :title="text + pageTitle" :visible.sync="dialogFormVisible">
       <el-form
-        :rules="rules"
+        :rules="ruleInline"
         ref="dataForm"
         :model="formBase"
         label-position="left"
@@ -43,11 +39,11 @@ import { detail, update, add } from '@/api/base/permissions'
 import { list } from '@/api/base/menus.js'
 let _this = []
 export default {
-  name: 'permissionsAdd',
-  props: ['dialogFormVisible', 'text', 'pageTitle', 'objeditId'],
+  name: 'usersAdd',
+  props: ['text', 'pageTitle', 'ruleInline'],
   data () {
     return {
-      list: [],
+      dialogFormVisible: false,
       PermissionGroupsmenu: [],
       defaultProps: {
         label: 'title'
@@ -60,12 +56,7 @@ export default {
         title: '',
         permissions: []
       },
-      curPermissions: [],
-      rules: {
-        title: [
-          { required: true, message: '必填', trigger: 'blur' }
-        ]
-      }
+      curPermissions: []
     }
   },
   computed: {
@@ -74,7 +65,7 @@ export default {
         // 复选框选择
         let checked = false
         let selected = false
-        if (_this !== null && _this.formBase.permissions?.length > 0) {
+        if (_this !== null && _this.formBase.permissions.length > 0) {
           const per = _this.formBase.permissions.find(function (value, index) {
             return value === item.id
           })
@@ -111,9 +102,9 @@ export default {
           if (node.checked) {
             parentNode.selected = true
           }
-          if (it.childs !== undefined && it.childs?.length > 0) {
+          if (it.childs !== undefined && it.childs.length > 0) {
             parseNodes(it.childs, node)
-          } else if (it.points !== undefined && it.points?.length > 0) {
+          } else if (it.points !== undefined && it.points.length > 0) {
             parseNodes(it.points, node)
           }
           parentNode.children.push(node)
@@ -125,11 +116,20 @@ export default {
     }
   },
   methods: {
+    // 弹层显示
+    dialogFormV () {
+      this.dialogFormVisible = true
+    },
+    // 弹层隐藏
+    dialogFormH () {
+      this.dialogFormVisible = false
+    },
     // 退出
     handleClose () {
-      this.$emit('update:dialogFormVisible', false)
-      this.$refs.dataForm.resetFields()
-      // 表单重置
+      this.$emit('handleCloseModal')
+    },
+    // 表单重置
+    handleResetForm () {
       this.formBase = {
         id: 0,
         title: '',
@@ -137,45 +137,57 @@ export default {
       }
     },
     // 编辑详情数据加载
-    async hanldeEditForm () {
-      this.formBase.id = this.objeditId
+    hanldeEditForm (objeditId) {
+      this.formBase.id = objeditId
       var data = {
-        id: this.objeditId
+        id: objeditId
       }
-      const ret = await detail(data)
-      console.log(ret, 666)
-      this.formBase.id = ret.data.id
-      this.formBase.title = ret.data.title
-      this.formBase.permissions = ret.data.permissions
+      detail(data).then((ret, err) => {
+        if (err) {
+          return err
+        }
+        this.formBase.id = ret.data.id
+        this.formBase.title = ret.data.title
+        this.formBase.permissions = ret.data.permissions
+      })
     },
-    async setupData () {
-      // data是成功时返回的数据
-      // list().then(data => {
-      //   this.PermissionGroupsmenu = data.data
-      // })
-      const { data } = await list()
-      this.PermissionGroupsmenu = data
+    setupData () {
+      list().then(data => {
+        this.PermissionGroupsmenu = data.data
+      })
     },
 
     // 节点复选框被选中
     handleCheckChange (data, checked, indeterminate) {
       this.treeCheckedNodes = checked.checkedNodes
-      this.list = this.treeCheckedNodes
-      this.formBase.permissions = this.list.map(item => {
-        return item.id
-      })
-      // console.log(693, this.formBase.permissions)
     },
-
     // 表单提交
-    async handleAdd (object) {
+    handleAdd (object) {
       // 读取完整节点
       const curPermissions = new Set()
-      console.log(curPermissions)
+      // function parse(nodes, selectedId) {
+      //   for (const it of nodes) {
+      //     let isFind = false
+      //     if (it.childs !== undefined) {
+      //       isFind = parse(it.childs, selectedId)
+      //     }
+      //     if (it.points !== undefined) {
+      //       isFind = parse(it.points, selectedId)
+      //     }
+      //     if (it.id === selectedId) {
+      //       isFind = true
+      //     }
+      //     if (isFind) {
+      //       curPermissions.add(it.id)
+      //       return true
+      //     }
+      //   }
+      //   return false
+      // }
       // 已选中的控件节点
-      if (this.treeCheckedNodes?.length === 0) {
+      if (this.treeCheckedNodes.length === 0) {
         this.treeCheckedNodes = this.$refs.treeMenu.getCheckedNodes()
-        if (this.treeCheckedNodes?.length === 0) {
+        if (this.treeCheckedNodes.length === 0) {
           return
         }
       }
@@ -192,16 +204,41 @@ export default {
           message: '请选择需要的权限及页面权限点',
           type: 'error'
         })
+      } else {
+        this.dataFormSub(this.curPermissions)
       }
-      this.objeditId ? await update(this.formBase) : await add(this.formBase)
-      this.$message.success(this.objeditId ? '编辑成功' : '新增成功')
-      this.$parent.getPermissionsList()
-      this.handleClose()
     },
     nodeDate (nodesPath, curPermissions, findId) {
       nodesPath.map(function (item, index) {
         if (curPermissions.indexOf(item.id) === -1) {
           curPermissions.push(findId)
+        }
+      })
+    },
+    dataFormSub (curPermis) {
+      this.$refs.dataForm.validate(valid => {
+        if (valid) {
+          this.$emit('handleCloseModal')
+          if (_this.formBase.id) {
+            const technologyTypes = []
+            var data = {
+              id: this.formBase.id,
+              title: this.formBase.title,
+              permissions: curPermis
+            }
+            update(data).then(() => {
+              this.$emit('newDataes', this.formBase)
+            })
+          } else {
+            add({
+              title: this.formBase.title,
+              permissions: curPermis
+            }).then(() => {
+              this.$emit('newDataes', this.formBase)
+            })
+          }
+        } else {
+          this.$Message.error('*号为必填项!')
         }
       })
     }

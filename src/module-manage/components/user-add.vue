@@ -31,8 +31,6 @@
         </el-form-item>
         <!-- 权限组 -->
         <el-form-item :label="$t('table.permissionUser')">
-          <!-- v-model="addFormData.permission_group_id" -->
-          <!-- v-model="addFormData.permission_group_title" -->
           <el-select
             v-model="addFormData.permission_group_id"
             ref="quanxian"
@@ -50,19 +48,6 @@
         <el-form-item :label="$t('table.phone')">
           <el-input v-model="addFormData.phone"></el-input>
         </el-form-item>
-
-        <!-- 头像上传下一个版本再做 -->
-        <!-- <el-form-item :label="$t('table.avatar')" prop="avatar">
-            <el-upload
-              class="upload-demo"
-              :action="importFileUrl"
-              :on-change="handleChange"
-              :file-list="fileList" accept="image/jpeg,image/gif,image/png,image/bmp"
-              :before-upload="beforeAvatarUpload">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-        </el-form-item>-->
         <el-form-item :label="$t('table.introduction')">
           <el-input
             v-model="addFormData.introduction"
